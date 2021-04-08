@@ -1,4 +1,4 @@
-# Generate Merkle tree from CSV & write proofs to file JSON
+# Generate Merkle tree from CSV & write leaves & proofs to JSON file
 
 1) Create random/test/sample data & write to csv 
 2) And/or generate merkle tree for token distribution & write to JSON file   
@@ -42,7 +42,7 @@ user_id,amount
 const filename = 'sample_dist_list.csv'
 ```
 
-like `sample_distribution_list.csv`. Make sure your csv is present and the format matches. Something like:
+like `sample_distribution_list.csv`. Make sure your csv is present and the format matches. Default looks like this:
 
 ```javascript
 const user_dist = ['user_id', 'amount']
@@ -51,7 +51,7 @@ const user_dist = ['user_id', 'amount']
 
 `node generate_merkle_tree.js`
 
-File will contain a record for each `user_id` that contains the `leaf` node hash and `proof` like: 
+File will contain a record for each `user_id` that contains the `leaf` node hash and `proof`: 
 
 ```
     "0": {
@@ -65,11 +65,11 @@ File will contain a record for each `user_id` that contains the `leaf` node hash
     },
 ```
 
-The `claim` field is keccak256 hash like:
+The `claim` field is keccak256 hash:
 
 `const leaf = keccak256(['user_id', 'amount']);`
 
-The script will out put something like this to the terminal:
+The script will output to the terminal:
 
 ```
 dist_proofs.json has been written with a root hash of:
