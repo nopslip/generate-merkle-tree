@@ -1,0 +1,17 @@
+{
+  "name": "merkel_tree_generator",
+  "version": "0.0.1",
+  "description": "Creates Merkle tree from CSV",
+  "main": "create_tree.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zachary Wolff",
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "csv-writer": "^1.6.0",
+    "keccak256": "^1.0.2",
+    "merkletreejs": "^0.2.18"
+  }
+}
