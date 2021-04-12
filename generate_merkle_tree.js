@@ -36,7 +36,7 @@ fs.createReadStream(filename)
         const leaf = keccak256(token_dist[user_id]);
         // create dist object
         const user_dist = {
-            claim: '0x' + leaf.toString('hex'),
+            leaf: '0x' + leaf.toString('hex'),
             proof: merkle_tree.getHexProof(leaf)
         }
         // add record to our distribution 
