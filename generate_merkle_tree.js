@@ -4,7 +4,7 @@ const csv = require('csv-parser');
 const fs = require('fs');
 
 // import distribution from this file 
-const filename = 'sample_dist_list.csv'
+const filename = 'initial_dist.csv'
 
 // create our token distribution
 const token_dist = []
@@ -14,7 +14,7 @@ fs.createReadStream(filename)
   .pipe(csv())
   .on('data', (row) => {
     // import each record line by line
-    const user_dist = [row['user_id'], row['amount']]
+    const user_dist = [row['user_id'], row['total']]
     // add record to our token distribution   
     token_dist.push(user_dist);
   })
@@ -29,20 +29,21 @@ fs.createReadStream(filename)
 
   // write leaves & proofs proofs to json file 
   function write_leaves(merkle_tree, token_dist, root) {
-    console.log('Begin writing leaves to file')
+    console.log('Begin writing leaves to file...')
     full_dist = {}
-    for (user_id = 0; user_id < token_dist.length; user_id++) {
+    for (line = 0; line < token_dist.length; line++) {
         // generate leaf hash from raw data 
-        const leaf = keccak256(token_dist[user_id]);
+        const leaf = keccak256(token_dist[line]);
         // create dist object
         const user_dist = {
             leaf: '0x' + leaf.toString('hex'),
             proof: merkle_tree.getHexProof(leaf)
         }
+        console.log(token_dist[line][0])
         // add record to our distribution 
-        full_dist[user_id] = user_dist;
+        full_dist[token_dist[line][0]] = user_dist;
     } 
-    fs.writeFile("./dist_proofs.json", JSON.stringify(full_dist, null, 4), (err) => {
+    fs.writeFile("./initial_dist_proofs.json", JSON.stringify(full_dist, null, 4), (err) => {
         if (err) {
             console.error(err);
             return;
