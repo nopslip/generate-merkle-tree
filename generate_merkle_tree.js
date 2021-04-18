@@ -23,9 +23,6 @@ fs.createReadStream(filename)
     user_hash = utils.solidityKeccak256([ 'uint32', 'uint256'], [row['user_id'], row['total']]); // hash up the user_id and amount Solidity style    
     user_dist_list.push(user_dist); // used for tracking user_id of each leaf so we can write to proofs file accordingly 
     token_dist.push(user_hash) // used for crafting the actual tree
-    if (row['user_id'] == '9530') {
-        console.log('user_hash: ', user_hash)
-     } 
   })
   .on('end', () => {
     // create merkle tree from token distribution 
