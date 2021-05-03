@@ -3,12 +3,14 @@ const keccak256 = require('keccak256')
 const csv = require('csv-parser');
 const fs = require('fs');
 var utils = require('ethers').utils;
+const Web3 = require('web3');
+web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/eebdcf4d9e2440d8b99edc88cf04a099'));
 
 // import distribution from this file 
-const filename = 'token-distribution-example.csv'
+const filename = 'initial_dist_4_15_staging.csv'
 
 // what file should we write the merkel proofs too?
-const output_file = 'token-distribution-example-tree.json'
+const output_file = 'encode_final_staging.json'
 
 // create our token distribution
 const user_dist_list = []
@@ -18,11 +20,15 @@ const token_dist = []
 fs.createReadStream(filename)
   .pipe(csv())
   .on('data', (row) => {
-    // import each record line by line
-    const user_dist = [row['user_id'], row['total']] // create record to track user_id of leaves 
-    user_hash = utils.solidityKeccak256([ 'uint32', 'uint256'], [row['user_id'], row['total']]); // hash up the user_id and amount Solidity style    
+     /**
+      * import each record line by line as strings 
+      * web3.eth.abi.encodeParameters will reject any malformed or non-conforming values 
+      **/ 
+    const user_dist = [row['user_id'], row['total']]; // create record to track user_id of leaves 
+    const encoded_data = web3.eth.abi.encodeParameters(['uint32', 'uint256'], [row['user_id'], row['total']]); // encode base data like solidity abi.encode 
+    const user_hash = utils.solidityKeccak256(['bytes'], [encoded_data]); // get a hash the encoded_data 
     user_dist_list.push(user_dist); // used for tracking user_id of each leaf so we can write to proofs file accordingly 
-    token_dist.push(user_hash) // used for crafting the actual tree
+    token_dist.push(user_hash); // used for crafting the actual tree
   })
   .on('end', () => {
     // create merkle tree from token distribution 
@@ -45,9 +51,6 @@ fs.createReadStream(filename)
             leaf: '0x' + leaf.toString('hex'),
             proof: merkle_tree.getHexProof(leaf)
         }
-        if (user_dist_list[line][0] == '9530') {
-          console.log('leaf hash: ', leaf.toString('hex'))
-       } 
         // add record to our distribution 
         full_dist[user_dist_list[line][0]] = user_dist;
     } 
