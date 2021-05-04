@@ -4,7 +4,9 @@ const csv = require('csv-parser');
 const fs = require('fs');
 var utils = require('ethers').utils;
 const Web3 = require('web3');
-web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/eebdcf4d9e2440d8b99edc88cf04a099'));
+
+// create web3 instance (no provider needed)
+var web3 = new Web3();
 
 // import distribution from this file 
 const filename = 'initial_dist_4_15_staging.csv'
@@ -12,23 +14,21 @@ const filename = 'initial_dist_4_15_staging.csv'
 // what file should we write the merkel proofs too?
 const output_file = 'encode_final_staging.json'
 
-// create our token distribution
-const user_dist_list = []
+// used to store one leaf for each line in the distribution file 
 const token_dist = []
 
-// open csv 
+// used for tracking user_id of each leaf so we can write to proofs file accordingly 
+const user_dist_list = []
+
+// open distribution csv 
 fs.createReadStream(filename)
   .pipe(csv())
   .on('data', (row) => {
-     /**
-      * import each record line by line as strings 
-      * web3.eth.abi.encodeParameters will reject any malformed or non-conforming values 
-      **/ 
     const user_dist = [row['user_id'], row['total']]; // create record to track user_id of leaves 
     const encoded_data = web3.eth.abi.encodeParameters(['uint32', 'uint256'], [row['user_id'], row['total']]); // encode base data like solidity abi.encode 
-    const user_hash = utils.solidityKeccak256(['bytes'], [encoded_data]); // get a hash the encoded_data 
-    user_dist_list.push(user_dist); // used for tracking user_id of each leaf so we can write to proofs file accordingly 
-    token_dist.push(user_hash); // used for crafting the actual tree
+    const leaf_hash = utils.solidityKeccak256(['bytes'], [encoded_data]); // get a hash the encoded_data 
+    user_dist_list.push(user_dist); // add record to index tracker 
+    token_dist.push(leaf_hash); // add leaf hash to distribution 
   })
   .on('end', () => {
     // create merkle tree from token distribution 
