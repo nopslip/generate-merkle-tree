@@ -1,13 +1,11 @@
-# Generate Merkle tree from CSV & write leaves & proofs to JSON file
-
-1) Create random/test/sample data & write to csv 
-2) And/or generate merkle tree for token distribution & write to JSON file   
+# Generate Merkle Tree from CSV & write proofs to JSON file
+This script can be used to iterate though lines of a CSV file (like a token distribution list) and generate a merkle tree from the lines in the file.  
 
 #### Setup   
 Install packages 
 `npm install`
 
-#### 1) run generate_sample_dist.js & write random data to csv  
+#### 1) run generate_sample_dist.js & write random data to csv (optional)
 
 1) Set the number of nodes you want in your distribution by adjusting the `line_count` in generate_sample_dist.js:  
 
