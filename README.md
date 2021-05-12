@@ -21,7 +21,7 @@ user_id,amount
 ```
 As long as those two fields are present the script should work. It's no problem if there are other unused fields in the csv as well.
 
-The script assumes that `amount` is in units Wei. 
+The script itself is agnostic to units for the `amount` field but it's likely that you will want your amounts to be in Wei.  
 
 You can also set the output file if you like:
 
